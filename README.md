@@ -27,6 +27,8 @@ Copy `conf/mod_warrior_additions.conf.dist` to your server's config directory an
 | `WarriorAdditions.RendSpread.SpreadSameRank` | `0` | `1` = source Rend must be on the current target; `0` = use highest rank found on any unit in range |
 | `WarriorAdditions.RendSpread.RefreshOnSpread` | `1` | `1` = also refresh Rend on targets that already have it; `0` = skip those targets |
 | `WarriorAdditions.RendSpread.RequiresTalentId` | `0` | Spell ID of a passive talent aura the warrior must have for spread to trigger (e.g. Blood Frenzy rank 1 = `29836`, rank 2 = `29859`). `0` = no requirement |
+| `WarriorAdditions.RendSpread.ProcChance` | `100` | Base % chance for the spread to trigger. Used when no `TalentProcList` entry matches |
+| `WarriorAdditions.RendSpread.TalentProcList` | `""` | Comma-separated `spellId:chance` pairs. First matching aura overrides `ProcChance`. Example: `"29836:50,29859:100"` |
 | `WarriorAdditions.ThunderclapAP.Enable` | `1` | Enable/disable the AP scaling feature entirely |
 | `WarriorAdditions.ThunderclapAP.StrMultiplier` | `0.20` | Bonus damage per TC hit = `floor(STR × value)`. `0.0` disables. Max `5.0` |
 

@@ -55,6 +55,26 @@ WarriorAdditions.RendSpread.RefreshOnSpread = 1
 # Default: 0
 WarriorAdditions.RendSpread.RequiresTalentId = 0
 
+# ProcChance
+#   Base percentage chance for the spread to trigger on each Thunderclap cast.
+#   Used when no TalentProcList entry matches the warrior's current auras.
+#   100 = always (default)   0 = never
+#
+# Default: 100
+WarriorAdditions.RendSpread.ProcChance = 100
+
+# TalentProcList
+#   Per-talent proc chance overrides. Comma-separated list of SpellId:Chance pairs.
+#   If the warrior has any of the listed auras active, the first match overrides ProcChance.
+#   Chance is a float percentage (0–100).
+#   Empty string = always use ProcChance (default).
+#
+#   Example — Blood Frenzy R1 gives 50% chance, R2 gives 100%:
+#     WarriorAdditions.RendSpread.TalentProcList = "29836:50,29859:100"
+#
+# Default: ""
+WarriorAdditions.RendSpread.TalentProcList = ""
+
 ###################################################################################################
 # THUNDERCLAP ATTACK POWER SCALING
 ###################################################################################################

@@ -7,9 +7,12 @@
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
+#include "Random.h"
+#include "Tokenize.h"
 #include <algorithm>
 #include <cmath>
 #include <list>
+#include <string>
 
 static constexpr uint32 REND_IDS[] = { 772, 2974, 2975, 11574, 11575, 11576, 25208, 47465, 47466 };
 
@@ -57,6 +60,33 @@ class spell_warrior_thunderclap_rend_spread : public SpellScript
             return;
 
         if (requiresTalentId > 0 && !caster->HasAura(requiresTalentId))
+            return;
+
+        // Resolve proc chance — check TalentProcList for a per-aura override, fall back to ProcChance.
+        float procChance = sConfigMgr->GetOption<float>("WarriorAdditions.RendSpread.ProcChance", 100.0f);
+        std::string talentProcStr = sConfigMgr->GetOption<std::string>("WarriorAdditions.RendSpread.TalentProcList", "");
+        if (!talentProcStr.empty())
+        {
+            for (std::string_view entry : Acore::Tokenize(talentProcStr, ',', false))
+            {
+                auto parts = Acore::Tokenize(entry, ':', false);
+                if (parts.size() != 2)
+                    continue;
+                try
+                {
+                    uint32 spellId = static_cast<uint32>(std::stoul(std::string(parts[0])));
+                    float  chance  = std::stof(std::string(parts[1]));
+                    if (spellId > 0 && caster->HasAura(spellId))
+                    {
+                        procChance = chance;
+                        break;
+                    }
+                }
+                catch (...) { continue; }
+            }
+        }
+        procChance = std::min(100.0f, std::max(0.0f, procChance));
+        if (procChance <= 0.0f || (procChance < 100.0f && !roll_chance_f(procChance)))
             return;
 
         // Collect unfriendly units in TC range directly (VisitObjects only — avoids C2665)
