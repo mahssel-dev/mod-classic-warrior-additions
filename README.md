@@ -22,9 +22,12 @@ Copy `conf/mod_warrior_additions.conf.dist` to your server's config directory an
 
 | Key | Default | Description |
 |-----|---------|-------------|
+| `WarriorAdditions.Enable` | `1` | Master switch — disables the entire module when `0`, regardless of per-feature settings |
+| `WarriorAdditions.RendSpread.Enable` | `1` | Enable/disable the Rend spread feature |
 | `WarriorAdditions.RendSpread.SpreadSameRank` | `0` | `1` = source Rend must be on the current target; `0` = use highest rank found on any unit in range |
 | `WarriorAdditions.RendSpread.RefreshOnSpread` | `1` | `1` = also refresh Rend on targets that already have it; `0` = skip those targets |
 | `WarriorAdditions.RendSpread.RequiresTalentId` | `0` | Spell ID of a passive talent aura the warrior must have for spread to trigger (e.g. Blood Frenzy rank 1 = `29836`, rank 2 = `29859`). `0` = no requirement |
+| `WarriorAdditions.ThunderclapAP.Enable` | `1` | Enable/disable the AP scaling feature entirely |
 | `WarriorAdditions.ThunderclapAP.StrMultiplier` | `0.20` | Bonus damage per TC hit = `floor(STR × value)`. `0.0` disables. Max `5.0` |
 
 ## Installation

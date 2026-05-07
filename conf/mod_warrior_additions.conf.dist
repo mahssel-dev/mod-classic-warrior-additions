@@ -5,8 +5,27 @@
 [worldserver]
 
 ###################################################################################################
+# GLOBAL
+###################################################################################################
+
+# Enable
+#   Master switch. Disabling this turns off the entire module regardless of per-feature settings.
+#   1 = enabled (default)
+#   0 = disabled
+#
+# Default: 1
+WarriorAdditions.Enable = 1
+
+###################################################################################################
 # THUNDERCLAP REND SPREAD
 ###################################################################################################
+
+# Enable
+#   1 = enabled (default)
+#   0 = disabled
+#
+# Default: 1
+WarriorAdditions.RendSpread.Enable = 1
 
 # When a warrior casts Thunderclap, spread Rend to all units in range that don't have it.
 #
@@ -39,6 +58,13 @@ WarriorAdditions.RendSpread.RequiresTalentId = 0
 ###################################################################################################
 # THUNDERCLAP ATTACK POWER SCALING
 ###################################################################################################
+
+# Enable
+#   1 = enabled (default)
+#   0 = disabled
+#
+# Default: 1
+WarriorAdditions.ThunderclapAP.Enable = 1
 
 # StrMultiplier
 #   Bonus damage added per Thunderclap hit: floor(STR * StrMultiplier)

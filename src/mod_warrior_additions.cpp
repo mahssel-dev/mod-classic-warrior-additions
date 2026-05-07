@@ -13,10 +13,12 @@
 
 static constexpr uint32 REND_IDS[] = { 772, 2974, 2975, 11574, 11575, 11576, 25208, 47465, 47466 };
 
-static bool UnitHasRend(Unit* unit)
+
+// Returns true if the unit has any Rend aura owned by ownerGuid.
+static bool UnitHasOwnRend(Unit* unit, ObjectGuid ownerGuid)
 {
     for (uint32 id : REND_IDS)
-        if (unit->HasAura(id))
+        if (unit->GetAura(id, ownerGuid))
             return true;
     return false;
 }
@@ -39,7 +41,9 @@ class spell_warrior_thunderclap_rend_spread : public SpellScript
 
     bool Load() override
     {
-        return GetCaster() && GetCaster()->getClass() == CLASS_WARRIOR;
+        return sConfigMgr->GetOption<bool>("WarriorAdditions.Enable", true)
+            && sConfigMgr->GetOption<bool>("WarriorAdditions.RendSpread.Enable", true)
+            && GetCaster() && GetCaster()->getClass() == CLASS_WARRIOR;
     }
 
     void HandleAfterCast()
@@ -110,15 +114,15 @@ class spell_warrior_thunderclap_rend_spread : public SpellScript
 
         for (Unit* unit : targets)
         {
-            bool hadRend = UnitHasRend(unit);
-            if (!hadRend || refreshOnSpread)
+            bool hasOwnRend = UnitHasOwnRend(unit, casterGuid);
+            if (!hasOwnRend || refreshOnSpread)
             {
                 // AddAura bypasses the spell cast system (no facing/range checks).
                 // CastSpell(triggered=true) still runs CheckRange which enforces
                 // SPELL_FACING_FLAG_INFRONT for melee spells, silently failing for
                 // units behind the caster.
                 caster->AddAura(rendSpellId, unit);
-                if (!hadRend)
+                if (!hasOwnRend)
                 {
                     // Spread: match source's remaining duration so it doesn't start at full
                     if (Aura* newAura = unit->GetAura(rendSpellId, casterGuid))
@@ -127,7 +131,7 @@ class spell_warrior_thunderclap_rend_spread : public SpellScript
                         newAura->SetDuration(sourceDuration);
                     }
                 }
-                // Refresh (hadRend): AddAura resets to full duration via TryRefreshStackOrCreate — don't override
+                // Refresh (hasOwnRend): AddAura resets to full duration via TryRefreshStackOrCreate — don't override
             }
         }
     }
@@ -151,7 +155,9 @@ class spell_warrior_thunderclap_ap_scaling : public SpellScript
 
     bool Load() override
     {
-        return GetCaster() && GetCaster()->getClass() == CLASS_WARRIOR;
+        return sConfigMgr->GetOption<bool>("WarriorAdditions.Enable", true)
+            && sConfigMgr->GetOption<bool>("WarriorAdditions.ThunderclapAP.Enable", true)
+            && GetCaster() && GetCaster()->getClass() == CLASS_WARRIOR;
     }
 
     void HandleOnHit()
