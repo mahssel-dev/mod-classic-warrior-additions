@@ -9,12 +9,12 @@ AzerothCore module for WoW 3.3.5 that adds Classic-style warrior mechanics missi
 When a warrior casts Thunderclap, their highest-rank Rend is spread to all nearby enemies that don't already have it. Inspired by the Classic-era Blood Frenzy talent fantasy where TC + Rend is the core AoE rotation loop.
 
 - Spreads the warrior's own Rend (aura ownership preserved — warrior gets the ticks)
-- Spread Rend matches the source's remaining duration, not a fresh application
+- Spread Rend matches the source's remaining duration, not a fresh application (Can keep a snapped shot rend going in theory)
 - Configurable: require a specific talent aura (e.g. Blood Frenzy), control whether existing Rend on targets gets refreshed
 
 ### Thunderclap AP Scaling
 
-Thunderclap gains bonus flat damage per hit based on the warrior's Strength: `floor(STR × multiplier)`. Makes Strength gear meaningful for the TC rotation rather than purely a stat-stick for auto-attacks.
+Thunderclap gains bonus flat damage per hit based on the warrior's Strength: `floor(STR × multiplier)`. Though Thunderclap already scales with Attack Power in WotLK this can amplify that scaling with a cap of x5.
 
 ## Configuration
 
