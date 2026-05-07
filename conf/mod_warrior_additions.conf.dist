@@ -1,0 +1,54 @@
+###################################################################################################
+# MOD WARRIOR ADDITIONS
+###################################################################################################
+
+[worldserver]
+
+###################################################################################################
+# THUNDERCLAP REND SPREAD
+###################################################################################################
+
+# When a warrior casts Thunderclap, spread Rend to all units in range that don't have it.
+#
+# SpreadSameRank
+#   1 = only spread if the warrior's current target (GetVictim) has Rend — spreads that exact rank
+#   0 = find the highest Rend rank on any unit in range and spread it (default)
+#
+# Default: 0
+WarriorAdditions.RendSpread.SpreadSameRank = 0
+
+# RefreshOnSpread
+#   1 = also update Rend on units that already have it (refreshes duration, upgrades rank)
+#   0 = skip units that already have any Rend
+#
+# Default: 1
+WarriorAdditions.RendSpread.RefreshOnSpread = 1
+
+# RequiresTalentId
+#   Spell ID of a passive talent aura the warrior must have active for the spread to trigger.
+#   Uses HasAura — only works for talents that apply a persistent passive aura on the player.
+#   0 = no talent required (default)
+#
+#   Example passive talent auras:
+#     Blood Frenzy Rank 1 = 29836   Blood Frenzy Rank 2 = 29859
+#     Improved Rend does not apply a passive aura and cannot be used here.
+#
+# Default: 0
+WarriorAdditions.RendSpread.RequiresTalentId = 0
+
+###################################################################################################
+# THUNDERCLAP ATTACK POWER SCALING
+###################################################################################################
+
+# StrMultiplier
+#   Bonus damage added per Thunderclap hit: floor(STR * StrMultiplier)
+#   0.0 = disabled
+#   Max = 5.0
+#
+#   Examples at STR 1000:
+#     0.10 = 100 bonus damage
+#     0.20 = 200 bonus damage (default)
+#     0.50 = 500 bonus damage
+#
+# Default: 0.20
+WarriorAdditions.ThunderclapAP.StrMultiplier = 0.20
