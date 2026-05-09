@@ -2,6 +2,7 @@
 #include "SpellScript.h"
 #include "SpellScriptLoader.h"
 #include "Unit.h"
+#include "Player.h"
 #include "SpellAuras.h"
 #include "Config.h"
 #include "CellImpl.h"
@@ -215,8 +216,92 @@ class spell_warrior_thunderclap_ap_scaling : public SpellScript
     }
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DW Level Scaling
+//
+// Grants dual-wielding warriors a hidden hit bonus that scales down to 0 at
+// MaxLevel, compensating for the +19% DW white-miss penalty at lower levels.
+// Completely invisible — implemented as a PASSIVE aura (no buff bar entry).
+//
+// Controlled by worldserver.conf:
+//   WarriorAdditions.DWLevelScaling.Enable    0/1
+//   WarriorAdditions.DWLevelScaling.MaxLevel  <level cap, default 60>
+//   WarriorAdditions.DWLevelScaling.MaxBonus  <max % hit at level 1, default 19.0>
+//
+// Custom passive spell defined in mod_warrior_additions_dw_scaling_spell.sql
+// ─────────────────────────────────────────────────────────────────────────────
+static constexpr uint32 WARRIOR_DW_HIT_SPELL_ID = 900001;
+
+static void ApplyDWHitBonus(Player* player)
+{
+    if (!sConfigMgr->GetOption<bool>("WarriorAdditions.Enable", true))
+        return;
+    if (!sConfigMgr->GetOption<bool>("WarriorAdditions.DWLevelScaling.Enable", true))
+        return;
+    if (player->getClass() != CLASS_WARRIOR)
+        return;
+
+    // Always remove first so we either cleanly re-apply or leave it gone
+    player->RemoveAura(WARRIOR_DW_HIT_SPELL_ID);
+
+    // Only applies when actually dual wielding (weapon in offhand, not shield)
+    if (!player->GetWeaponForAttack(OFF_ATTACK, false))
+        return;
+
+    uint32 maxLevel = sConfigMgr->GetOption<uint32>("WarriorAdditions.DWLevelScaling.MaxLevel", 60);
+    float  maxBonus = sConfigMgr->GetOption<float>("WarriorAdditions.DWLevelScaling.MaxBonus", 19.0f);
+    float  minBonus = sConfigMgr->GetOption<float>("WarriorAdditions.DWLevelScaling.MinBonus", 0.0f);
+
+    uint32 level = player->GetLevel();
+
+    // Linear: maxBonus at level 1, minBonus at maxLevel, minBonus beyond
+    float scaled = (level < maxLevel)
+        ? maxBonus * (float)(maxLevel - level) / (float)(maxLevel - 1)
+        : 0.0f;
+    int32 bonus = static_cast<int32>(std::floor(std::max(minBonus, scaled)));
+    if (bonus <= 0)
+        return;
+
+    if (Aura* aura = player->AddAura(WARRIOR_DW_HIT_SPELL_ID, player))
+    {
+        aura->SetMaxDuration(-1);
+        aura->SetDuration(-1);
+        if (AuraEffect* eff = aura->GetEffect(0))
+            eff->ChangeAmount(bonus);
+    }
+}
+
+class warrior_dw_level_scaling : public PlayerScript
+{
+public:
+    warrior_dw_level_scaling() : PlayerScript("warrior_dw_level_scaling") {}
+
+    void OnPlayerLogin(Player* player) override
+    {
+        ApplyDWHitBonus(player);
+    }
+
+    void OnPlayerLevelChanged(Player* player, uint8 /*oldLevel*/) override
+    {
+        ApplyDWHitBonus(player);
+    }
+
+    // Re-evaluate on any equip — detects offhand weapon being added or replaced
+    void OnPlayerEquip(Player* player, Item* /*item*/, uint8 /*bag*/, uint8 /*slot*/, bool /*update*/) override
+    {
+        ApplyDWHitBonus(player);
+    }
+
+    // Re-evaluate when item removed — detects offhand being emptied
+    void OnPlayerUnequip(Player* player, Item* /*item*/) override
+    {
+        ApplyDWHitBonus(player);
+    }
+};
+
 void AddSC_warrior_additions()
 {
     RegisterSpellScript(spell_warrior_thunderclap_rend_spread);
     RegisterSpellScript(spell_warrior_thunderclap_ap_scaling);
+    new warrior_dw_level_scaling();
 }

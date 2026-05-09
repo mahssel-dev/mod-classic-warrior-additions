@@ -98,3 +98,49 @@ WarriorAdditions.ThunderclapAP.Enable = 1
 #
 # Default: 0.20
 WarriorAdditions.ThunderclapAP.StrMultiplier = 0.20
+
+###################################################################################################
+# DUAL WIELD LEVEL SCALING
+###################################################################################################
+
+# Enable
+#   1 = enabled (default)
+#   0 = disabled
+#
+# Default: 1
+WarriorAdditions.DWLevelScaling.Enable = 1
+
+# MaxLevel
+#   Level at which the bonus reaches 0. Set to your server's level cap.
+#   Warriors at or above this level receive no bonus.
+#
+# Default: 60
+WarriorAdditions.DWLevelScaling.MaxLevel = 60
+
+# MaxBonus
+#   Hit% bonus granted at level 1. Scales linearly to 0 at MaxLevel.
+#   19.0 fully compensates the dual wield white-miss penalty at level 1.
+#   Lower values leave some penalty in place even at low levels.
+#
+#   Formula: bonus = floor(MaxBonus * (MaxLevel - currentLevel) / (MaxLevel - 1))
+#
+#   Examples at MaxBonus = 19.0, MaxLevel = 60:
+#     Level  1: +19%   (27% DW miss - 19% = 8% effective, same as 2H)
+#     Level 20: +12.9%
+#     Level 40: +6.4%
+#     Level 59: +0.3%
+#     Level 60: +0%    (full 27% DW miss penalty)
+#
+# Default: 19.0
+WarriorAdditions.DWLevelScaling.MaxBonus = 19.0
+
+# MinBonus
+#   Floor for the hit% bonus. The scaling never drops below this value,
+#   even at or above MaxLevel. Use to keep a small permanent bonus at cap.
+#   0 = no floor — bonus reaches exactly 0 at MaxLevel (default)
+#
+#   Example — keep 5% bonus at all times:
+#     WarriorAdditions.DWLevelScaling.MinBonus = 5.0
+#
+# Default: 0.0
+WarriorAdditions.DWLevelScaling.MinBonus = 0.0
