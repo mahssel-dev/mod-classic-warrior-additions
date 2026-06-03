@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "Player.h"
 #include "SpellAuras.h"
+#include "SpellAuraEffects.h"
 #include "Config.h"
 #include "CellImpl.h"
 #include "GridNotifiers.h"
